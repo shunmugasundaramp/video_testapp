@@ -1,0 +1,82 @@
+<!--
+/***************************************************************************
+* COPYRIGHT :
+* This software is subject to copyright protection under the Berne
+* Convention.  In terms of the Copyright Act No.98 of 1978 (as ammended),
+* no part of this software may be reproduced in any form or by any means,
+* electronic or mechanical, including recording or by any information
+* storage and retrieval system, without prior permission in writing from
+* Altech UEC (Pty) Limited.
+***************************************************************************/
+* @brief
+*   Test script to validate the multi video playback
+*
+@verbatim
+****************************************************************************
+* Date        Author/Details
+*---------------------------------------------------------------------------
+* 2014-06-18  Shunmuga S.P. -- Created
+****************************************************************************
+@endverbatim
+*/
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<body bgcolor="#ffffff" onload="myload()">
+<div style="position: absolute; width: 1280px; text-align: center; top: 40px; font-size: 28px; color: white; background-color: rgb(255, 0, 143);">Media Test</div>
+</body>
+
+<script type="text/javascript">
+var current = [1, 0, 1, 2]; var vid = []; var x = [182, 650, 182, 650]; var y = [110, 110, 402, 402];
+var srcOrigin = '';
+var medias =  [ 
+   "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+   "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+   "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+   "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+   "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+   "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4"
+			  ];
+
+myload = function() {
+   var elem = document.createElement('div');
+   elem.setAttribute('id', 'stamp');
+   elem.setAttribute('style', 'position: absolute; left: 1030px; top: 700px; height: 30px; text-align: right; font-size: 20px; color: #999999; z-index: 109;');
+   elem.innerHTML = "<a target='_blank' href='https://www.linkedin.com/in/shunmugasundaramp/'>Shunmuga Sundaram P</a>";
+
+   document.getElementsByTagName('body')[0].appendChild(elem);
+   for (var it=0; it<4; ++it) {
+      var elem = document.createElement('video');
+      elem.setAttribute('id', 'vid'+it);
+      elem.setAttribute('type', 'video/mp4');
+      elem.setAttribute('controls', '');
+      elem.setAttribute('style', 'position: absolute; left: '+x[it]+'px; top: '+y[it]+'px; width: 448px; height: 252px; border-style: solid; border-color: gray;');
+      document.getElementsByTagName('body')[0].appendChild(elem);
+      vid[it] = document.getElementById("vid"+it);
+      load(it, srcOrigin+medias[it]);
+      vid[it].addEventListener('ended',function(e){goNext(it);});
+   }
+}
+
+play = function(id) {
+   vid[id].play();
+}
+
+load = function(id, url) {
+   vid[id].pause();
+   vid[id].src=url;
+   play(id);
+}
+
+goNext = function(id) {
+   load(id, srcOrigin+medias[(++(current[id]) && (current[id] == medias.length ? (current[id] = 0) : current[id]))]);
+   play(id);
+}
+
+goPrev = function(id) {
+   load(id, srcOrigin+medias[(current == 0 ? (current = medias.length-1) : --current)]);
+   play(id);
+}
+	
+</script>
+
+</html> 

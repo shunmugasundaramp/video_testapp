@@ -1,0 +1,111 @@
+<!--
+/***************************************************************************
+* COPYRIGHT :
+* This software is subject to copyright protection under the Berne
+* Convention.  In terms of the Copyright Act No.98 of 1978 (as ammended),
+* no part of this software may be reproduced in any form or by any means,
+* electronic or mechanical, including recording or by any information
+* storage and retrieval system, without prior permission in writing from
+* Altech UEC (Pty) Limited.
+***************************************************************************/
+* @brief
+*   Test script to validate the video scaling functionality in various resolutions.
+*
+@verbatim
+****************************************************************************
+* Date        Author/Details
+*---------------------------------------------------------------------------
+* 2014-06-20  Shunmuga S.P. -- Created
+****************************************************************************
+@endverbatim
+*/
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<body onload="myload()">
+<video id="vid" preload="auto" tabindex="0" controls="" type="video/mp4" style="border-style: solid; border-color: gray;"></video>
+<input type="button" id="pause" value="P" onclick="playpause()" style="position: absolute; left: 100px; top: 50px; z-index: 110; width: 50px; font-size: 24px; border-radius: 100px;"/>  
+<input type="button" id="1440x1080" value="1440x1080" onclick="canScale(1440, 1080)" style="position: absolute; left: 150px; top: 50px; z-index: 111; width: 150px; font-size: 24px;"/>  
+<input type="button" id="1920x1080" value="1920x1080" onclick="canScale(1920, 1080)" style="position: absolute; left: 300px; top: 50px; z-index: 100; width: 150px; font-size: 24px;"/>  
+<input type="button" id="720x576" value="720x576" onclick="canScale(720, 576)" style="position: absolute; left: 450px; top: 50px; z-index: 101; width: 150px; font-size: 24px;"/>  
+<input type="button" id="1280x720" value="1280x720" onclick="canScale(1280, 720)" style="position: absolute; left: 600px; top: 50px; z-index: 102; width: 150px; font-size: 24px;"/>  
+<input type="button" id="640x480" value="640x480" onclick="canScale(640, 480)" style="position: absolute; left: 750px; top: 50px; z-index: 103; width: 150px; font-size: 24px;"/>  
+<input type="button" id="852x480" value="852x480" onclick="canScale(852, 480)" style="position: absolute; left: 900px; top: 50px; z-index: 108; width: 150px; font-size: 24px;"/>  
+<input type="button" id="1440x900" value="1440x900" onclick="canScale(1440, 900)" style="position: absolute; left: 1050px; top: 50px; z-index: 109; width: 150px; font-size: 24px;"/>  
+<div id="status" style="position: absolute; z-index: 104; left: 0px; top: 400px; width: 1280px; height: 200px; font-size: 28px; text-align: center;"></div>
+<div style="position: absolute; width: 1280px; text-align: center; top: 580px; font-size: 24px; color: white; background-color: rgb(255, 0, 143); z-index: 107;">Video Scaling Test</div>
+</body>
+
+<script type="text/javascript">
+var current = -1; var spin = null; var vid = null; var timer = null; var wid = 1920; var hei = 1080; var playstate = 0;
+var switchingTimeInMS = 0; /*0 means disable, 5000 means 5 secs*/
+var srcOrigin = "";
+var medias =  [ 
+   "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+   "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+   "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+   "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+   "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+   "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4"
+			  ];
+
+convertTime = function(timeInSecs) {
+   timeInSecs = Math.round(timeInSecs);
+   var h = Math.round(timeInSecs/3600);
+   var m = Math.round((timeInSecs%3600)/60);
+   var s = Math.round((timeInSecs%3600)%60);
+   return ''+(h<10?'0':'')+h+':'+(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+}
+
+updateStatus = function() {
+   document.getElementById('status').innerHTML = convertTime(vid.currentTime) + ' ~ ' + convertTime(vid.duration) + '<br>'+medias[current];
+}
+
+myload = function() {
+   vid = document.getElementById("vid");
+   canScale(wid, hei);
+   goNext();
+   vid.addEventListener('ended',function(e){
+      window.setTimeout(function(){goNext();},4000);
+   });
+}
+
+playpause = function() {
+   if (playstate) {
+      vid.pause();
+      playstate = 0;
+      if (spin) window.clearInterval(spin);
+   } else {
+      play();
+   }
+}
+
+play = function() {
+   vid.play();
+   playstate = 1;
+   if (spin) window.clearInterval(spin);
+   spin = window.setInterval(updateStatus, 1000);
+} 
+
+goNext = function() {
+   vid.pause();
+   vid.src=srcOrigin+medias[(++current && (current == medias.length ? (current = 0) : current))];
+   play();
+}
+
+canScale = function(w, h) {
+   document.getElementById(wid+'x'+hei).style.backgroundColor = '';
+   document.getElementById(w+'x'+h).style.backgroundColor = 'rgb(255, 0, 143)';
+   vid.style.width = w+'px';
+   vid.style.height = h+'px';
+   wid = w;
+   hei = h;
+}
+
+goPrev = function() {
+   vid.pause();
+   vid.src=srcOrigin+medias[(current == 0 ? (current = medias.length-1) : --current)];
+   play();
+}
+	
+</script>
+</html> 
