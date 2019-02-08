@@ -1,0 +1,261 @@
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<body bgcolor="#ffffff" onload="myload()">
+<div id="mevents" style="position: absolute; z-index: 101; left: 40px; top: 0px; width: 220px; height: 720px; background-color: #CCCCCC; font-size: 18px; opacity: 0.7;"></div>
+<div id="mprops" style="position: absolute; z-index: 101; left: 1020px; top: 0px; width: 220px; height: 720px; background-color: #CCCCCC; font-size: 18px; opacity: 0.7;"></div>
+<input id="playpause" type="button" value="Pause" onclick="playpause()" style="position: absolute; left: 290px; top: 60px; width: 100px; height: 26px; z-index: 102;"/>  
+<input type="button" value="Prev" onclick="goPrev()" style="position: absolute; left: 390px; top: 60px; width: 100px; height: 26px; z-index: 102;"/> 
+<input type="button" value="Next" onclick="goNext()" style="position: absolute; left: 490px; top: 60px; width: 100px; height: 26px; z-index: 102;"/>  
+<input type="button" value="Back" onclick="history.back()" style="position: absolute; left: 590px; top: 60px; width: 100px; height: 26px; z-index: 102;"/>  
+<input type="button" value="Auto Start" onclick="doTimer(1,1)" style="position: absolute; left: 690px; top: 60px; width: 100px; height: 26px; z-index: 102;"/>  
+<input type="button" value="Auto Stop" onclick="doTimer(0,1)" style="position: absolute; left: 790px; top: 60px; width: 100px; height: 26px; z-index: 102;"/>  
+<input id="view" type="button" value="FullView" onclick="scale(1)" style="position: absolute; left: 890px; top: 60px; width: 100px; height: 26px; z-index: 102;"/>  
+<input id="frwd" type="button" value="-2x" onclick="setPlayrate(0)" style="position: absolute; left: 290px; top: 86px; width: 100px; height: 26px; z-index: 102;"/> 
+<input id="ffwd" type="button" value="+2x" onclick="setPlayrate(1)" style="position: absolute; left: 390px; top: 86px; width: 100px; height: 26px; z-index: 102;"/> 
+<input type="button" value="v______" onclick="seek('beg')" style="position: absolute; left: 490px; top: 86px; width: 100px; height: 26px; z-index: 102;"/> 
+<input type="button" value="___v___" onclick="seek('mid')" style="position: absolute; left: 590px; top: 86px; width: 100px; height: 26px; z-index: 102;"/> 
+<input type="button" value="______v" onclick="seek('end')" style="position: absolute; left: 690px; top: 86px; width: 100px; height: 26px; z-index: 102;"/> 
+<input type="button" value="" style="position: absolute; left: 790px; top: 86px; width: 100px; height: 26px; z-index: 102;"/> 
+<input type="button" value="" style="position: absolute; left: 890px; top: 86px; width: 100px; height: 26px; z-index: 102;"/> 
+
+<video id="vid" preload="auto" tabindex="0" controls="" type="video/mp4" style="border-style: solid; border-color: gray; z-index: 100;"></video>
+<div id="status" style="position: absolute; left: 0px; width: 1280px; text-align: center; top: 580px; font-size: 28px; color: white; background-color: rgb(255, 0, 143); z-index: 103;">Media Test</div>
+<div id="counter" style="position: absolute; width: 300px; left: 490px; text-align: center; top: 400px; font-size: 96px; color: rgb(255, 0, 143); z-index: 104;"></div>
+<div id="pbulb-back" style="position:absolute; left: 0px; top: 575px; height: 1px; width: 1280px; z-index: 122; background-color: rgb(255, 0, 143);"></div>
+<div id="pbulb" style="position:absolute; left: 0px; top: 560px; height: 20px; width: 20px; z-index: 121; border-style: solid; border-width: 4px; border-color: white; background-color: rgb(255, 0, 143); border-radius: 20px;"></div>
+</body>
+
+<script type="text/javascript">
+var current = -1; var spin = null; var vid = null; var timer = null; var counter = 0; var playstate = 1; var fullstate = 1;
+var vw = 448; var vh = 252; var vx = 416; var vy = 140; var vow = 0; var voh = 0; var playrate = 6; var totalevents = 0;
+var playrates = [ 0, -32, -16, -8, -4, -2, 1, +2, +4, +8, +16, +32, 0];
+var switchingTimeInMS = 0; /*0 means disable, 5000 means 5 secs*/
+//var srcOrigin = '/usr/local/web/PurpleUI/assets/videos/';
+var srcOrigin = '';
+var medias =  [ 
+   //"Nee Nenaindal ft. Vidya and Vandana Iyer - Shankar Tucker - YouTube.m4v",
+   "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+   "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+   "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+   "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+   "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+   "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4"
+];
+
+convertTime = function(timeInSecs) {
+   timeInSecs = Math.round(timeInSecs);
+   var h = Math.floor(timeInSecs/3600);
+   var m = Math.floor((timeInSecs%3600)/60);
+   var s = Math.floor((timeInSecs%3600)%60);
+   return ''+(h<10?'0':'')+h+':'+(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+}
+
+updatePlayrateButtons = function() {
+   document.getElementById('ffwd').value = playrates[(playrate+1)] == 0 ? '' : (playrates[(playrate+1)]+'x');
+   document.getElementById('frwd').value = playrates[(playrate-1)] == 0 ? '' : (playrates[(playrate-1)]+'x');
+}
+
+updateStatus = function() {
+   if (!vid.duration) return;
+   //console.log('>>> pt['+vid.currentTime+'] dur['+vid.duration+'] floor['+Math.floor(vid.currentTime)+']');
+   document.getElementById('counter').innerHTML = counter;
+   scale(0);
+   updateProperties('<b>Playrate</b>');
+   updateProperties(getPlayrate());
+   updateProperties('<b>Current Time</b>');
+   updateProperties(convertTime(vid.currentTime));
+   updateProperties('<b>Duration</b>');
+   updateProperties(convertTime(vid.duration));
+   document.getElementById('pbulb').style.left = ((vid.currentTime/vid.duration)*1280)+'px';
+   if ((Math.floor(vid.currentTime) == 0) && (getPlayrate() < 1 || getPlayrate() > 1)) updateEvents('begin');
+}
+
+updateProperties = function(props) {
+   if (props === '') document.getElementById('mprops').innerHTML = '<br><b><center>Media Properties</center></b>';
+   else document.getElementById('mprops').innerHTML += '&nbsp;&nbsp;&nbsp;' + props + '<br>';
+}
+
+updateEvents = function(event) {
+   if (event === '' || totalevents == 15) {
+      document.getElementById('mevents').innerHTML = '<br><b><center>Media Events</center></b>';
+      totalevents = 0;
+      if (event == '') {
+         playrate = 6;
+         updatePlayrateButtons();
+      }
+   } 
+   if (event !== '') {
+      document.getElementById('mevents').innerHTML += '&nbsp;&nbsp;&nbsp;' + event + '<br>';
+      ++totalevents;
+   }
+   if (event == 'begin') {
+      goPrev();
+      updateEvents('');
+   }
+   if (event == 'ended') {
+      goNext();
+      updateEvents('');
+   }
+}
+
+myload = function() {
+   var elem = document.createElement('div');
+   elem.setAttribute('id', 'stamp');
+   elem.setAttribute('style', 'position: absolute; left: 1030px; top: 640px; height: 30px; text-align: right; font-size: 20px; color: #999999; z-index: 109;');
+   elem.innerHTML = "<a target='_blank' href='https://www.linkedin.com/in/shunmugasundaramp/'>Shunmuga Sundaram P</a>";
+   document.getElementsByTagName('body')[0].appendChild(elem);
+   document.addEventListener('keydown', function(e) {
+      e.preventDefault();
+   }, true);
+   document.addEventListener('keypress', function(e) {
+      e.preventDefault();
+   }, true);
+   document.addEventListener('keyup', function(e) {
+      e.preventDefault();
+   }, true);
+   updateEvents('');
+   vid = document.getElementById("vid");
+   vid.style.position = 'absolute';
+   scale(1);
+   vid.addEventListener('ended', function() {
+      updateEvents('ended');
+   });
+   vid.addEventListener('progress', function() {
+      updateEvents('progress');
+   });
+   vid.addEventListener('canplay', function() {
+      updateEvents('canplay');
+   });
+   vid.addEventListener('canplaythrough', function() {
+      updateEvents('canplaythrough');
+   });
+   vid.addEventListener('abort', function() {
+      updateEvents('abort');
+   });
+   vid.addEventListener('durationchange', function() {
+      updateEvents('durationchange');
+   });
+   vid.addEventListener('timeupdate', function() {
+      updateStatus();
+   });
+   vid.addEventListener('ratechange', function() {
+      updateEvents('ratechange');
+      //updateStatus();
+   });
+   vid.addEventListener('error', function() {
+      updateEvents('error');
+   });
+   vid.addEventListener('loadeddata', function() {
+      updateEvents('loadeddata');
+   });
+   vid.addEventListener('loadedmetadata', function() {
+      updateEvents('loadedmetadata');
+      vow = vid.videoWidth;
+      voh = vid.videoHeight;
+      scale(0);
+   });
+   vid.addEventListener('pause', function() {
+      updateEvents('pause');
+   });
+   vid.addEventListener('play', function() {
+      updateEvents('play');
+   });
+   vid.addEventListener('playing', function() {
+      updateEvents('playing');
+   });
+   //vid.play();
+   goNext();
+   doTimer(1,0);
+}
+
+doTimer = function(flag,func) {
+   if (func !== 0) switchingTimeInMS = 8000;
+   if (switchingTimeInMS === 0) return;
+   if (timer) window.clearInterval(timer);
+   flag && (timer = window.setInterval(goNext, switchingTimeInMS));
+}
+
+playpause = function() {
+   var elem = document.getElementById("playpause");
+   if (playstate) {
+      vid.pause();
+      playstate = 0;
+      elem.value = "Play";
+   } else {
+      play();
+      playstate = 1;
+      elem.value = "Pause";
+   }
+}
+
+scale = function(canscale) {
+   if (canscale) {
+      var elem = document.getElementById("view");
+      if (fullstate) {
+         vw = 448; vh = 252; vx = 416; vy = 140;
+         elem.value = "FullView";
+      } else {
+         vw = 1280; vh = 720; vx = 0; vy = 0;
+         elem.value = "SkinView";
+      }
+      fullstate = !fullstate;
+   }
+   vid.style.left = vx;
+   vid.style.top = vy;
+   vid.style.width = vw;
+   vid.style.height = vh;
+   updateProperties('');
+   updateProperties('<b>Output Window</b>');
+   updateProperties('left: '+vx);
+   updateProperties('top: '+vy);
+   updateProperties('width: '+vw);
+   updateProperties('height: '+vh);
+   updateProperties('<b>Video Output</b>');
+   updateProperties('width: '+vow);
+   updateProperties('height: '+voh);
+}
+
+setPlayrate = function(dir) {
+   if ((dir == 0 && playrate == 1 )|| (dir == 1 && playrate == playrates.length-2)) return;
+   playrate = playrate + (dir ? 1 : -1);
+   updatePlayrateButtons();
+   vid.pause();
+   vid.playbackRate = playrates[playrate];
+   vid.play();
+}
+
+seek = function(act) {
+   if (act == 'mid') vid.currentTime = vid.duration/2;
+   else if (act == 'beg') vid.currentTime = 0;
+   else if (act == 'end') vid.currentTime = vid.duration-1;
+}
+
+getPlayrate = function() {
+   return vid.playbackRate;
+}
+
+play = function() {
+   vid.play();
+} 
+
+goNext = function() {
+   updateEvents('');
+   vid.pause();
+   vid.src=srcOrigin+medias[(++current && (current == medias.length ? (current = 0) : current))];
+   document.getElementById('status').innerHTML = medias[current];
+   play();
+   ++counter;
+}
+
+goPrev = function() {
+   updateEvents('');
+   vid.pause();
+   vid.src=srcOrigin+medias[(current == 0 ? (current = medias.length-1) : --current)];
+   document.getElementById('status').innerHTML = medias[current];
+   play();
+   ++counter;
+}
+	
+</script>
+
+</html> 
