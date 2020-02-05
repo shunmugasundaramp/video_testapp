@@ -1,0 +1,257 @@
+<!--
+   ref: https://github.com/Dash-Industry-Forum/dash.js?
+   https://support.streamroot.io/hc/en-us/articles/360000906093-Dash-js
+-->
+<html>
+<link rel="icon" type="image/x-icon" href="res/img/favicon.ico"></link>
+<script src="res/js/jquery-3.1.1.min.js"></script>
+<script src="res/js/navigator.js"></script>
+<script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
+<link rel="stylesheet" href="res/css/theme01.css"></link>
+<link rel="stylesheet" href="res/css/w3.css">
+<script type="text/javascript">
+var k_mainmenu = [
+                    {	
+                       title: '100 Nick',
+                       icon: 'res/img/channels/nick.jpg',
+                       url: 'http://125.17.1.153/OTTPP/DASH/SD1/master.mpd'
+                    },
+                    {
+                       title: '101 Sonic-Dash',
+                       icon: 'res/img/channels/sonic_nickelodeon.jpg',
+                       url: 'http://125.17.1.153/OTTPP/DASH/SD2/master.mpd'
+                    },
+                    {
+                       title: '102 Sun Music',
+                       icon: 'res/img/channels/sun_music.jpg',     
+                       url: 'http://125.17.1.153/OTTPP/DASH/SD3/master.mpd'
+                    },
+                    {
+                       title: '103 Sun Music',
+                       icon: 'res/img/channels/sun_music.jpg',
+                       url: 'http://125.17.1.153/OTTPP/DASH/SD4/master.mpd'
+                    },
+                    {
+                       title: '104 Mazh Manorama',
+                       icon: 'res/img/channels/mazhavil_manorama.jpg',
+                       url: 'ttp://125.17.1.153/OTTPP/DASH/SD5/master.mpd'
+                    },
+                    {
+                       title: '105 Thanthi TV',
+                       icon: 'res/img/channels/thanthi_tv_in.jpg',
+                       url: 'http://125.17.1.153/OTTPP/DASH/SD6/master.mpd'
+                    },
+                    {
+                       title: '106 Kalignar Seithigal',
+                       icon: 'res/img/channels/kalignernews.jpg',
+                       url: 'http://125.17.1.153/OTTPP/DASH/SD7/master.mpd'
+                    },
+                    {
+                       title: '107 Shalom TV',
+                       icon: 'res/img/channels/shalom_tv.jpg',
+                       url: 'http://125.17.1.153/OTTPP/DASH/SD8/master.mpd'
+                    },
+                    {
+                       title: '108 News 7',
+                       icon: 'res/img/channels/news7_tamil.jpg',
+                       url: 'http://125.17.1.153/OTTPP/DASH/SD9/master.mpd'
+                    },
+                    {
+                       title: '109 Nambikkai TV',
+                       icon: 'res/img/channels/nambikkai.jpg',
+                       url: 'http://125.17.1.153/OTTPP/DASH/SD10/master.mpd'
+                    },
+                    {
+                       title: '110 Kalaignar TV',
+                       icon: 'res/img/channels/kalaignar.jpg',
+                       url: 'http://125.17.1.153/OTTPP/DASH/SD11/master.mpd'
+                    },
+                    {
+                       title: '111 DD National',
+                       icon: 'res/img/channels/dd.jpg',
+                       url: 'http://125.17.1.153/OTTPP/DASH/SD12/master.mpd'
+                    },
+               
+                    {
+                       title: '112 DD Malayalam',
+                       icon: 'res/img/channels/dd_malayalam.jpg',
+                       url: 'http://125.17.1.153/OTTPP/DASH/SD13/master.mpd'
+                    },
+                    {
+                       title: '113 Kalaignar TV',
+                       icon: 'res/img/channels/kalignernews.jpg',
+                       url: 'http://125.17.1.153/OTTPP/DASH/SD14/master.mpd'
+                    },
+                    {
+                       title: '114 DD Saptagiri',
+                       icon: 'res/img/channels/dd_saptagiri.jpg',
+                       url: 'http://125.17.1.153/OTTPP/DASH/SD15/master.mpd'
+                    },
+                    {
+                       title: '115 Sun TV HD',
+                       icon: 'res/img/channels/sun.jpg',
+                       url: 'http://125.17.1.153/OTTPP/DASH/HD1/master.mpd'
+                    },
+                    {
+                       title: '116 Sun Music HD',
+                       icon: 'res/img/channels/sun_music.jpg',
+                       url: 'http://125.17.1.153/OTTPP/DASH/HD2/master.mpd'
+                    },
+                    {
+                       title: '117 Gemini TV HD',
+                       icon: 'res/img/channels/sun_gemini_hd.jpg',
+                       url: 'http://125.17.1.153/OTTPP/DASH/HD3/master.mpd'
+                    },
+                    {
+                       title: '118 Gemini TV HD',
+                       icon: 'res/img/channels/sun_gemini_hd.jpg',
+                       url: 'http://125.17.1.153/OTTPP/DASH/HD4/master.mpd'
+                    }
+                ];
+
+var k_acttunemenuindex = 0;
+var k_actmainmenuindex = 0;
+var k_maxrow = 0;
+var k_rowsize = 7;
+var k_itemheight = 175;
+var k_itemwidth = 150;
+var k_opts = false;
+var k_selected = 0;
+var k_player = null;
+
+showMainMenu = function(transperent) {
+   if (transperent) {
+      $('#channelmenu').fadeTo(500, 0.5);
+   } else {
+      $('#channelmenu').hide();
+   }
+   $('#mainmenu').fadeTo(500, 1.0);
+   $('#bg0' + k_actmainmenuindex).addClass("icon-focus");
+   $(document).off('keydown').on('keydown', mainmenuKeyEventListener);
+   $('#subheader').text("Main Menu");
+}
+
+hideMainMenu = function() {
+   $('#mainmenu').hide();
+   $('#channelmenu').fadeTo(500, 1.0);
+   $(document).off('keydown').on('keydown', channellistKeyEventListener);
+}
+
+showChannelListMenu = function(mediaid) {
+   $('#mainmenu').hide();
+   $('#channelmenu').fadeTo(500, 1.0);
+   //$('#channelmenu').show();
+
+   //$('#channelmenu').html('');
+
+   //$('#channelmenu').append("<video id='html5video' data-dashjs-player controls src='"+k_mainmenu[mediaid].url+"' style='position: absolute; left: 0px; top: 0px; width: 1280px; height: 720px;'></video>");
+   var vid = document.getElementById('html5video');
+
+   if (k_player !== null) {
+      k_player.reset();
+   }
+
+   k_player = dashjs.MediaPlayer().create();
+   k_player.initialize(vid, k_mainmenu[mediaid].url, true);
+   //vid.src = k_mainmenu[mediaid].url;
+   //vid.play();
+
+   $(document).off('keydown').on('keydown', channellistKeyEventListener);
+}
+
+prepareMainMenu = function() {
+   k_maxrow = 0;
+   var x=0, y=0;
+   $('#mainmenulist').html('');
+   for (var it=0; it < k_mainmenu.length; ++it) {
+      //elem = document.createElement("li");
+      //elem.setAttribute('name',k_mainmenu[it].title);
+      //elem.setAttribute('id','b'+it);
+      //elem.innerHTML = k_mainmenu[it].title;
+      //$('#mainmenulist').append(elem);
+
+      $('#mainmenulist').append("<li id='b"+it+"' name='"+k_mainmenu[it].title+"'><img src='"+k_mainmenu[it].icon+"' class='channelicon'></img>"+k_mainmenu[it].title+"</li>");
+   }
+
+   menuInit();
+}
+
+$(document).ready(function() {
+   prepareMainMenu();
+   showMainMenu(false);
+   //showTuneMenu();
+   //navigator.setVideoBroadcastPosition(490, 200, 670, 413);
+});
+
+disallowKeyEvents = function(event) {
+   event.preventDefault();
+   event.stopPropagation();
+}
+
+channellistKeyEventListener = function(event) {
+   var kc = event.keyCode;
+   if (kc == 8 || (kc >= 37 && kc <= 40)) {
+      showMainMenu(true);
+      return;
+   }
+}
+
+mainmenuKeyEventListener = function(event) {
+    var lastfocus = k_selected;
+    var listOfDropDownItems = $('#mainmenulist')[0];
+    if (event.keyCode == 97) {
+        document.location.reload();
+        return;
+    } else if (event.keyCode == 8) {
+        //history.back();
+        hideMainMenu();
+    } else if (event.keyCode == 13) {
+        showChannelListMenu(k_selected);
+        return;
+    } else if (event.keyCode == 38) {
+        // checking first row
+        menuSelect(k_selected-1)
+    } else if (event.keyCode == 40) {
+        menuSelect(k_selected+1)
+    } else {
+        return;
+    }
+}
+
+function menuInit() {
+   k_opts = document.getElementById('mainmenulist').getElementsByTagName('li');
+   menuSelect(0);
+}
+function menuSelect(i) {
+   if (i<=0) {
+     i = 0;
+   } else if (i>=k_opts.length) {
+     i = k_opts.length-1;
+   }
+   k_selected = i;
+   var scroll = Math.max(0, Math.min(k_opts.length-12, k_selected-6));
+   for (i=0; i<k_opts.length; i++) {
+     k_opts[i].style.display = (i>=scroll && i<scroll+12) ? 'block' : 'none';
+     k_opts[i].className = k_selected==i ? 'lisel' : '';
+   }
+}
+
+setChannel = function(id) {
+   navigator.setChannel(navigator.getChannelList().item(id));
+};
+
+
+</script>
+<body>
+   
+   <!--<div id="subheader" class="subheader"></div>-->
+   <div id="channelmenu" style="display:none">
+      <!--<video id="html5video" type="video/mp4" loop style="position: absolute; left: 0px; top: 0px; width: 1280px; height: 720px;"></video>-->
+      <video id="html5video" data-dashjs-player style="position: absolute; left: 0px; top: 0px; width: 1280px; height: 720px;"></video>
+   </div>
+   <div id="mainmenu" style="display:none">
+      <div id="header" class="header">Channel List<img src='res/img/navvertical.png' style='height:30px; padding-left:20px;'></div>
+      <ul id="mainmenulist" class="mainmenulist" style="background-color: black; opacity: 0.8;"></ul>
+   </div>
+</body>
+</html>

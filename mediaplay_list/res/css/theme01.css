@@ -1,5 +1,6 @@
 body {
-   background-image: url('../img/bg03.jpg');
+   //background-image: url('../img/bg03.jpg');
+   background-color: black;
    background-repeat: no-repeat; 
    //background-position: bottom center;
    background-size: 1280px 720px; 
@@ -17,13 +18,15 @@ body {
    position:absolute;
    left: 0px;
    top: 60px;
-   width: 1030px;
+   width: 504px;
    //height: 35px;
-   //background-color: white;
-   color: black;
-   font-size: 40px;
+   background-color: rgb(5,5,5);
+   color: white;
+   font-size: 26px;
    cursor: pointer;
    text-align: right;
+   box-shadow: 2px -4px 5px #cccccc;
+   padding:10px;
 }
 
 .subheader {
@@ -68,10 +71,10 @@ body {
 }
 #mainmenulist {
    position:absolute;
-   left: 90px;
-   top: 75px;
-   width: 1050px;
-   height: 570px;
+   left: 115px;
+   top: 119px;
+   //width: 450px;
+   height: 500px;
    overflow-x: hidden;
    overflow-y: scroll;
    list-style: none;
@@ -153,169 +156,35 @@ body {
    border: 4px solid rgba(255,255,255,0.2);
    opacity:1.0;
 }
-#tunemenu {
-   position:absolute;
-   left: 355px;
-   top: 200px;
-   width: 590px;
-   height: 430px;
-   //border: 1px solid white;
-   padding: 20px;
-   background-size: 100% 100%; 
-   //box-shadow: 5px 5px 25px #000000;
-   //background-color: rgba(1,18,80,0.9);
-   background-image: url('../img/tunebg.png');
-}
-#tunecaption {
-   position:absolute;
-}
-#tuneunits {
-   position:absolute;
-   left: 240px;
-}
-#tunevalues {
-   position:absolute;
-   left: 350px;
-   width: 200px;
-   text-align: center;
-}
-.tunemenucaption {
-   position: relative;
-   color: white;
-   font-size: 22px;
+
+
+ul.mainmenulist {
+   padding: 0;
+   margin: 0;
+   position: absolute;
+   width: 400px;
+ }
+ .mainmenulist li {
+   display: none;
+   overflow: hidden;
+   width: 400px;
    //height: 40px;
-   padding: 10px;
-   border: 2px solid rgba(255,255,255,0);
-}
-.tunemenufocus {
-   border-radius: 10px;
-   border: 2px solid white;
-}
-#tunestatus {
-   position:absolute;
-   left: -20px;
-   //width: 150px;
-   top: 180px;
-   padding: 20px;
-   font-size: 32px;
-}
-#tunestatusstr {
-   //position:absolute;
-   //left: 650px;
-   //width: 150px;
-   top: 200px;
-   padding: 20px;
-   font-size: 32px;
-}
-#tuneprogressbg {
-   position:absolute;
-   left: 29px;
-   top: 200px;
-   width: 557px;
-   background-color: white;
-   box-shadow: 5px 5px 25px #000000;
-}
-#tuneprogresscaption {
-   position:absolute;
-   //left: 50px;
-   top: 200px;
-   width: 567px;
-   //background-color: #FCFCFC;
-   text-align: right;
-   font-size: 22px;
-   padding-right:10px;
-}
-#tuneprogressfreq {
-   position:absolute;
-   //left: 50px;
-   top: 200px;
-   width: 567px;
-   //background-color: #FCFCFC;
-   font-size: 22px;
-   padding-left:15px;
-}
-#tuneprogress {
-  width: 0%;
-  height: 30px;
-  background-color: #337FB0;
-}
-#tunechannelcount {
-   position:absolute;
-   left: 600px;
-   top: 6px;
-   width: 250px;
-   text-align: center;
-   font-size: 140pt;
-   color: black;
-}
-#navhorizontal {
-   position:absolute;
-   left: 30px;
-   top: 290px;
-   width: 50px;
-}
-#navhorizontalcaption {
-   position:absolute;
-   left: 90px;
-   top: 300px;
-   width: 150px;
-   font-size: 18px;
-   color: black;
-}
-#navvertical {
-   position:absolute;
-   left: 30px;
-   top: 320px;
-   width: 50px;
-}
-#navverticalcaption {
-   position:absolute;
-   left: 90px;
-   top: 330px;
-   width: 150px;
-   font-size: 18px;
-   color: black;
-}
-
-#channelmenu {
-   //position:absolute;
-   //left: 90px;
-   //top: 200px;
-   //width: 400px;
-   //height: 413px;
-   //border: 1px solid white;
-   //padding: 20px;
-   //background-size: 100% 100%; 
-   //box-shadow: 5px 5px 25px #000000;
-   //background-color: rgba(1,18,80,0.9);
-   //background-image: url('../img/tunebg.png');
-}
-ul.channellist {
-  padding: 0px;
-  margin: 0;
-  //position: absolute;
-  width: 400px;
-  //left: -10px;
-  //top: -10px;
-   height: 413px;
-   background-image: url('../img/chlistbg.png');
-   box-shadow: 5px 5px 25px #000000;
-}
-.channellist li {
-  display: none;
-  overflow: hidden;
-  width: 400px;
-  height: 34px;
-  text-align: left;
-  font: 20px sans-serif;
-  padding-left: 11px;
-  padding-top: 5px;
-  color: #ffffff;
-  //background-color: #1C6A76;
-}
-.channellist .lisel {
-  color: rgb(3,66,97);
-  background-color: rgb(255,255,255);
-  //border: 2px solid rgba(1,18,80,0.9);
-}
-
+   text-align: left;
+   padding-left: 11px;
+   //padding-top: 5px;
+   font: 20px sans-serif;
+   color: #ffffff;
+   //background-color: rgb(0,43,89);
+ }
+ .mainmenulist .lisel {
+   color: rgb(3,66,97);
+   //background-color: rgb(255,255,255);
+   background-color: rgb(255,255,0);
+ }
+ 
+ .channelicon {
+    padding-right:10px;
+    padding-top:5px;
+    height:40px;
+    width:40px;
+ }
